@@ -58,7 +58,7 @@ function cancel(PoolKey calldata key, int24 tickLower, bool zeroForOne)
 }
 ```
 
-This funciton cancels a limit order for `msg.sender`.
+This function cancels a limit order for `msg.sender`.
 
 - Revert if the `Bucket` to remove limit order from is `filled`.
 - Remove liquidity for `msg.sender` from the `Bucket`.
@@ -125,7 +125,7 @@ This hook is triggered after a swap and is responsible for removing liquidity fr
 1. Find the value of `salt` needed to deploy the hooks contract at a valid address.
 
 ```shell
-forge test --match-path test/FindHookSalt.sol -vvv
+forge test --match-path test/FindHookSalt.test.sol -vvv
 ```
 
 2. Export the salt printed to your terminal from executing the command in the previous step.

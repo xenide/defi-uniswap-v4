@@ -91,7 +91,7 @@ Please refer to this for an in-depth explanation of the content:
     - [`modifyLiquidities`](https://github.com/Uniswap/v4-periphery/blob/60cd93803ac2b7fa65fd6cd351fd5fd4cc8c9db5/src/PositionManager.sol#L172-L179)
     - [`BaseActionsRouter`](https://github.com/Uniswap/v4-periphery/blob/main/src/base/BaseActionsRouter.sol)
     - [`Actions`](https://github.com/Uniswap/v4-periphery/blob/main/src/libraries/Actions.sol)
-  - Mint, burn, increase / decrease liquidty and collecct fees
+  - Mint, burn, increase / decrease liquidity and collect fees
     - [`V4Resolver`](https://github.com/Uniswap/v4-periphery/blob/main/src/base/DeltaResolver.sol)
   - [`permit2`](./notes/permit2.png)
     - [`permit2`](https://github.com/Uniswap/permit2)
