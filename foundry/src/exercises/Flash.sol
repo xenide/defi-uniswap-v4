@@ -36,17 +36,16 @@ contract Flash is IUnlockCallback {
         poolManager.take(currency, address(this), amount);
         tester.call("");
 
-        // N.B this pattern: it's always sync, transfer, then setle
+        // N.B. this pattern: it's always sync, transfer, then setle
         poolManager.sync(currency);
         IERC20(currency).transfer(address(poolManager), amount);
         uint256 paid = poolManager.settle();
+        assert(paid == amount);
         return "";
     }
 
     function flash(address currency, uint256 amount) external {
         // Write your code here
         poolManager.unlock(abi.encode(currency, amount));
-
-
     }
 }

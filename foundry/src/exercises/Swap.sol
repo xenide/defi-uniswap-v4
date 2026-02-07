@@ -44,11 +44,51 @@ contract Swap is IUnlockCallback {
         onlyPoolManager
         returns (bytes memory)
     {
-        // Write your code here
+        SwapExactInputSingleHop memory s = abi.decode(data, (SwapExactInputSingleHop));
+
+        address inputCurrency = s.zeroForOne? s.poolKey.currency0 : s.poolKey.currency1;
+        address outputCurrency = s.zeroForOne? s.poolKey.currency1 : s.poolKey.currency0;
+
+        BalanceDelta delta = BalanceDelta.wrap(poolManager.swap(s.poolKey, SwapParams({
+            zeroForOne: s.zeroForOne,
+            amountSpecified: -int128(s.amountIn),
+            sqrtPriceLimitX96: s.zeroForOne ? MIN_SQRT_PRICE + 1 : MAX_SQRT_PRICE - 1
+        }), ""));
+
+        uint256 outputAmt = s.zeroForOne ? uint256(int256(delta.amount1())) : uint256(int256(delta.amount0()));
+        require(outputAmt >= s.amountOutMin, "Output amt too little");
+
+        poolManager.take(
+            outputCurrency,
+            address(this),
+            outputAmt
+        );
+
+        // N.B. If the input currency is ETH, the transfer and settle is in one tx
+        // Unlike ERC20 settles
+        poolManager.sync(inputCurrency);
+        if (inputCurrency == address(0)) {
+            poolManager.settle{value: s.amountIn}();
+        } else {
+            inputCurrency.transferOut(address(poolManager), s.amountIn);
+            poolManager.settle();
+        }
+
         return "";
     }
 
     function swap(SwapExactInputSingleHop calldata params) external payable {
         // Write your code here
+        address currencyIn = params.zeroForOne ? params.poolKey.currency0 : params.poolKey.currency1;
+        address currencyOut = params.zeroForOne ? params.poolKey.currency1 : params.poolKey.currency0;
+
+        currencyIn.transferIn(msg.sender,  params.amountIn);
+        poolManager.unlock(abi.encode(params));
+
+        if (currencyIn.balanceOf(address(this)) > 0) {
+            currencyIn.transferOut(msg.sender, currencyIn.balanceOf(address(this)));
+        }
+
+        currencyOut.transferOut(msg.sender, currencyOut.balanceOf(address(this)));
     }
 }
