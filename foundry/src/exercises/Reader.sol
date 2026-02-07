@@ -2,6 +2,9 @@
 pragma solidity 0.8.30;
 
 import {IPoolManager} from "../interfaces/IPoolManager.sol";
+import {TransientState} from "../libraries/TransientState.sol";
+
+using TransientState for IPoolManager;
 
 contract Reader {
     IPoolManager public immutable poolManager;
@@ -29,6 +32,6 @@ contract Reader {
         view
         returns (int256 delta)
     {
-        // Write your code here
+        delta = poolManager.currencyDelta(target, currency);
     }
 }
